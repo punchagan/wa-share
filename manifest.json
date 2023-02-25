@@ -3,12 +3,12 @@
   "name": "WhatsApp Share",
   "icons": [
     {
-      "src": "https://muse-amuse.in/logo.png",
+      "src": "https://wa-share.muse-amuse.in/logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://muse-amuse.in/logo.png",
+      "src": "https://wa-share.muse-amuse.in/logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
