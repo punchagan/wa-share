@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>
+      WA Share
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Site to share WA chats">
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <script type="text/javascript" src="/util.js">
+    </script>
+  </head>
+  <body>
+    <h1>WA Share</h1>
+    <p>
+      An app to share and copy messages from a WA chat.
+    </p>
+    <div id="instructions">
+      <p>
+        <em>The data from your export is not sent to any external server.  The
+          data is processed within your browser.</em>
+      </p>
+      <h3>Installation & Usage</h3>
+      <ol>
+        <li>Open the site in Chrome</li>
+        <li>"Install App" from the settings menu</li>
+        <li>Open the WA chat that you want to copy from</li>
+        <li>Select "Export Chat" from the hamburger menu and select the WA Share app.</li>
+        <li>Select the date range for the messages you'd like to copy.</li>
+      </ol>
+    </div>
+    <p id="alert" style="font-style: italic;"></p>
+    <div id="copy-messages-ui" style="display: none;">
+      <p>
+        <label>Start Date</label>
+        <input id="start-date" type="date" name="start_date">
+      </p>
+      <p>
+        <label>End Date</label>
+        <input id="end-date" type="date" name="end_date">
+      </p>
+      <p>
+        <label>Message Separator</label>
+        <input id="separator" type="text" name="separator" value="---">
+      </p>
+      <button onclick="copyMessages()">Copy to Clipboard</button>
+       <details id="copied" style="display: none;">
+         <summary>Copied Text</summary>
+         <p id="copied-text" style="font-style: italic;"></p>
+       </details>
+    </div>
+  </body>
+</html>
