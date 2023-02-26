@@ -4,7 +4,6 @@ const isMessage = msg => msg.includes(":");
 const convertDate = date_ => {
   // NOTE: We assume that browser language matches the OS language
   let month, date, year;
-  console.log(date, navigator.language);
   if (navigator.language === "en-US") {
     [month, date, year] = date_.split("/");
   } else {
