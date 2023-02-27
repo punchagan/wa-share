@@ -72,6 +72,9 @@ const updateCopyMessagesUI = messages => {
   }
 };
 
+/*NOTE: This is a very basic regex that may be good enough for this use case*/
+const hasLink = msg => msg.match(/(https?:\/\/[^\s]+)/g) !== null;
+
 /* Click handler for Copy Messages button */
 const copyMessages = () => {
   const startDateEl = document.querySelector("#start-date");
@@ -84,10 +87,11 @@ const copyMessages = () => {
   const senderEl = document.querySelector("#sender");
   const nOptions = senderEl.options.length;
   const nSelected = senderEl.selectedOptions.length;
-
   const selectedSenders = new Set(
     [...senderEl.selectedOptions].map(o => o.value)
   );
+
+  const linksOnly = document.querySelector("#links").checked;
 
   const filtered = messages
     .filter(m => m[0] >= start && m[0] <= end)
@@ -95,6 +99,7 @@ const copyMessages = () => {
       m =>
         nSelected === nOptions ? true : selectedSenders.has(m[2].split(":")[0])
     )
+    .filter(m => (linksOnly ? hasLink(m[2]) : true))
     .map(m => {
       const msg = m[2];
       const n = msg.indexOf(":");
