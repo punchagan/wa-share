@@ -33,6 +33,7 @@ const processData = data => {
 const updateCopyMessagesUI = messages => {
   const n = messages.length;
   if (n > 0) {
+    // Update date selectors
     const dates = messages.map(([d, _, __]) => d);
     const dateRange = [dates[0], dates[n - 1]];
 
@@ -45,6 +46,23 @@ const updateCopyMessagesUI = messages => {
     endDateEl.value = dateRange[1];
     endDateEl.min = dateRange[0];
     endDateEl.max = dateRange[1];
+
+    // Update sender selector
+    const senders = Array.from(
+      new Set(messages.map(([_, __, t]) => t.split(":")[0]))
+    ).sort();
+    const senderEl = document.querySelector("#sender");
+    if (senders.length > 1) {
+      senders.map(s => {
+        const optionEl = document.createElement("option");
+        optionEl.value = s;
+        optionEl.innerText = s;
+        optionEl.selected = true;
+        senderEl.append(optionEl);
+      });
+    } else {
+      senderEl.parentElement.style.display = "none";
+    }
 
     const copyDiv = document.querySelector("#copy-messages-ui");
     copyDiv.style.display = "block";
@@ -62,11 +80,26 @@ const copyMessages = () => {
   const end = endDateEl.value;
   console.log(`Copying messages from ${start} to ${end}`);
   const { messages } = window;
-  const filtered = messages.filter(m => m[0] >= start && m[0] <= end).map(m => {
-    const msg = m[2];
-    const n = msg.indexOf(":");
-    return msg.slice(n + 2);
-  });
+
+  const senderEl = document.querySelector("#sender");
+  const nOptions = senderEl.options.length;
+  const nSelected = senderEl.selectedOptions.length;
+
+  const selectedSenders = new Set(
+    [...senderEl.selectedOptions].map(o => o.value)
+  );
+
+  const filtered = messages
+    .filter(m => m[0] >= start && m[0] <= end)
+    .filter(
+      m =>
+        nSelected === nOptions ? true : selectedSenders.has(m[2].split(":")[0])
+    )
+    .map(m => {
+      const msg = m[2];
+      const n = msg.indexOf(":");
+      return msg.slice(n + 2);
+    });
   const alertDiv = document.querySelector("#alert");
   const separator = document.querySelector("#separator").value;
   const text = filtered.join(`\n${separator}\n`);
