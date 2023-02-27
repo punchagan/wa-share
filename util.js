@@ -1,6 +1,7 @@
 // FIXME: Improve check?
 const isMessage = msg => msg.includes(":");
 
+/* Convert date string to YYYY-mm-dd format */
 const convertDate = date_ => {
   // NOTE: We assume that browser language matches the OS language
   let month, date, year;
@@ -24,13 +25,13 @@ const processData = data => {
     )
     .filter(mm => mm);
 
-  window.messages = messages;
-
-  const copyDiv = document.querySelector("#copy-messages-ui");
-  const alertDiv = document.querySelector("#alert");
-  const n = messages.length;
   document.querySelector("#instructions").style.display = "none";
+  updateCopyMessagesUI(messages);
+  window.messages = messages;
+};
 
+const updateCopyMessagesUI = messages => {
+  const n = messages.length;
   if (n > 0) {
     const dates = messages.map(([d, _, __]) => d);
     const dateRange = [dates[0], dates[n - 1]];
@@ -45,12 +46,15 @@ const processData = data => {
     endDateEl.min = dateRange[0];
     endDateEl.max = dateRange[1];
 
+    const copyDiv = document.querySelector("#copy-messages-ui");
     copyDiv.style.display = "block";
   } else {
+    const alertDiv = document.querySelector("#alert");
     alertDiv.innerText = "No messages found to copy!";
   }
 };
 
+/* Click handler for Copy Messages button */
 const copyMessages = () => {
   const startDateEl = document.querySelector("#start-date");
   const endDateEl = document.querySelector("#end-date");
