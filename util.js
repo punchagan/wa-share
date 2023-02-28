@@ -166,6 +166,14 @@ const updateCopyMessagesUI = messages => {
 /*NOTE: This is a very basic regex that may be good enough for this use case*/
 const hasLink = msg => msg.match(/(https?:\/\/[^\s]+)/g) !== null;
 
+const toggleSelection = () => {
+  const senderEl = document.querySelector("#sender");
+  const newState = !senderEl.options[0].selected;
+  [...senderEl.options].map(option => {
+    option.selected = newState;
+  });
+};
+
 /* Click handler for Copy Messages button */
 const copyMessages = () => {
   const startDateEl = document.querySelector("#start-date");
