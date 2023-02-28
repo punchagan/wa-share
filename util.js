@@ -1,5 +1,5 @@
-// FIXME: Improve check?
-const isMessage = msg => msg.includes(":");
+const isMessage = msg =>
+  msg.includes(":") && !msg.endsWith(": <Media omitted>");
 
 const convertDate = (dateStr, format) => {
   const parts = dateStr.split(format.separator);
