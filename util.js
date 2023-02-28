@@ -1,33 +1,124 @@
 // FIXME: Improve check?
 const isMessage = msg => msg.includes(":");
 
-/* Convert date string to YYYY-mm-dd format */
-const convertDate = date_ => {
-  // NOTE: We assume that browser language matches the OS language
-  let month, date, year;
-  if (navigator.language === "en-US") {
-    [month, date, year] = date_.split("/");
-  } else {
-    [date, month, year] = date_.split("/");
+const convertDate = (dateStr, format) => {
+  const parts = dateStr.split(format.separator);
+  const m = parts[format.monthIndex];
+  const month = m.length < 2 ? `0${m}` : m;
+  const d = parts[format.dayIndex];
+  const day = d.length < 2 ? `0${d}` : d;
+  const year_ = parts[format.yearIndex];
+  const year = format.yearLength === 2 ? `20${year_}` : year_;
+  return `${year}-${month}-${day}`;
+};
+
+const selectBestFormat = (validFormats, dates) => {
+  /* Look for number of changes in month and day, and choose the format with
+   * least number of month changes */
+  const listChangesCount = items => {
+    let count = 0;
+    let current = items[0];
+    for (const i of items) {
+      if (i !== current) {
+        current = i;
+        count++;
+      }
+    }
+    return count;
+  };
+
+  const changes = validFormats.map(format => {
+    const splitDates = dates.map(d => d.split(format.separator));
+    const dayChanges = listChangesCount(
+      splitDates.map(d => d[format.dayIndex])
+    );
+    const monthChanges = listChangesCount(
+      splitDates.map(d => d[format.monthIndex])
+    );
+    return [monthChanges, dayChanges, format];
+  });
+  // Use the format where monthChanges are fewer
+  changes.sort();
+  return changes[0][2];
+};
+
+const isValidDateFormat = (dateStr, format, today) => {
+  const parts = dateStr.split(format.separator);
+  if (parts.length !== 3) {
+    return false;
   }
-  const d = new Date([month, date, year]);
-  d.setMinutes(-d.getTimezoneOffset());
-  return d.toISOString().split("T")[0];
+  const day = parseInt(parts[format.dayIndex]);
+  const month = parseInt(parts[format.monthIndex]);
+  let year = parseInt(parts[format.yearIndex]);
+  if (isNaN(day) || isNaN(month) || isNaN(year)) {
+    return false;
+  }
+  if (format.yearLength === 2) {
+    year = 2000 + year; // assuming all dates in the list are in the 21st century
+  }
+  const dateObj = new Date(year, month - 1, day);
+  if (
+    dateObj.getFullYear() !== year ||
+    dateObj.getMonth() !== month - 1 ||
+    dateObj.getDate() !== day ||
+    dateObj > today
+  ) {
+    return false;
+  }
+  return true;
+};
+
+const guessDateFormat = dates => {
+  const formats = [
+    { separator: "/", dayIndex: 0, monthIndex: 1, yearIndex: 2, yearLength: 4 },
+    { separator: "/", dayIndex: 0, monthIndex: 1, yearIndex: 2, yearLength: 2 },
+    { separator: "/", dayIndex: 1, monthIndex: 0, yearIndex: 2, yearLength: 4 },
+    { separator: "/", dayIndex: 1, monthIndex: 0, yearIndex: 2, yearLength: 2 }
+  ];
+
+  const today = new Date();
+
+  const validFormats = formats.filter(format => {
+    for (const date of dates) {
+      if (!isValidDateFormat(date, format, today)) {
+        return false;
+      }
+      return true;
+    }
+  });
+
+  switch (validFormats.length) {
+    case 0:
+      return {};
+    case 1:
+      return validFormats[0];
+    default:
+      // Try to use most changed field to detect valid date format
+      return selectBestFormat(validFormats, dates);
+  }
 };
 
 const processData = data => {
-  const m = data.split(/\n*(\d{1,2}\/\d{1,2}\/\d{1,2}), (.*?) - /).slice(1);
-  const messages = m
+  const m = data.split(/\n*(\d{1,2}\/\d{1,2}\/\d{2,4}), (.*?) - /).slice(1);
+  let messages = m
     .map(
       (d, idx) =>
-        idx % 3 === 0 &&
-        isMessage(m[idx + 2]) && [convertDate(d), m[idx + 1], m[idx + 2]]
+        idx % 3 === 0 && isMessage(m[idx + 2]) && [d, m[idx + 1], m[idx + 2]]
     )
     .filter(mm => mm);
-
+  const dates = messages.map(([d, _, __]) => d);
+  const dateFormat = guessDateFormat(dates);
   document.querySelector("#instructions").style.display = "none";
-  updateCopyMessagesUI(messages);
-  window.messages = messages;
+
+  if (!dateFormat.separator) {
+    messages = [];
+    const alertDiv = document.querySelector("#alert");
+    alertDiv.innerText = `Could not find valid date format in text:\n\n ${data}`;
+  } else {
+    messages = messages.map(([d, t, m]) => [convertDate(d, dateFormat), t, m]);
+    updateCopyMessagesUI(messages);
+    window.messages = messages;
+  }
 };
 
 const updateCopyMessagesUI = messages => {
