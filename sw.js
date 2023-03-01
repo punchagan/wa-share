@@ -16,7 +16,7 @@ self.addEventListener("fetch", event => {
   }
 
   // Redirect to the form page
-  event.respondWith(Response.redirect("/"));
+  event.respondWith(Response.redirect("/index.html"));
 
   // Requests related to Web Share Target.
   event.waitUntil(
