@@ -1,5 +1,5 @@
 const isMessage = msg =>
-  msg.includes(":") && !msg.endsWith(": <Media omitted>");
+  msg.includes(":") && !msg.trim().endsWith(": <Media omitted>");
 
 const convertDate = (dateStr, format) => {
   const parts = dateStr.split(format.separator);
