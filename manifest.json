@@ -31,7 +31,11 @@
         {
           "name": "chat",
           "accept": [
-            "text/*"
+            "text/*",
+            "image/*",
+            "audio/*",
+            "video/*",
+            "application/pdf"
           ]
         }
       ]
