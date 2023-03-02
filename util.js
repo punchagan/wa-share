@@ -174,8 +174,7 @@ const toggleSelection = () => {
   });
 };
 
-/* Click handler for Copy Messages button */
-const copyMessages = () => {
+const generateShareText = () => {
   const startDateEl = document.querySelector("#start-date");
   const endDateEl = document.querySelector("#end-date");
   const start = startDateEl.value;
@@ -204,11 +203,16 @@ const copyMessages = () => {
       const n = msg.indexOf(":");
       return msg.slice(n + 2);
     });
-  const alertDiv = document.querySelector("#alert");
   const separator = document.querySelector("#separator").value;
-  const text = filtered.join(`\n${separator}\n`);
+  return [filtered.join(`\n${separator}\n`), filtered.length];
+};
+
+/* Click handler for Copy Messages button */
+const copyMessages = () => {
+  const [text, n] = generateShareText();
   navigator.clipboard.writeText(text);
-  alertDiv.innerText = `Copied ${filtered.length} messages to the clipboard`;
+  const alertDiv = document.querySelector("#alert");
+  alertDiv.innerText = `Copied ${n} messages to the clipboard`;
   document.querySelector("#copied-text").innerText = text;
   document.querySelector("#copied").style.display = "block";
 };
