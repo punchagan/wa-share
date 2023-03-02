@@ -225,6 +225,7 @@ if (navigator.serviceWorker) {
 
   navigator.serviceWorker.addEventListener("message", event => {
     if (event.data.action !== "chat") return;
+    // The first file a note to the user about what has been attached
     const dataFile = event.data.files[1];
     dataFile.text().then(data => processData(data));
   });
