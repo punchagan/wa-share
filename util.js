@@ -83,8 +83,8 @@ const guessDateFormat = dates => {
       if (!isValidDateFormat(date, format, today)) {
         return false;
       }
-      return true;
     }
+    return true;
   });
 
   switch (validFormats.length) {
