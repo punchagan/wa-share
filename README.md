@@ -19,9 +19,11 @@ installed PWAs.
 
 1. Open the site in Chrome
 1. "Install App" from the settings menu
-1. Open the WA chat that you want to copy from
-1. Select "Export Chat" from the hamburger menu and select the WA Share app.
-1. In the app, use filters like the date range, senders or only messages with links to filter required messages.
+1. Open the WhatsApp chat from where you want to copy/share texts and media
+1. Select "Export Chat" from the hamburger menu and select the "WA Share" app.
+1. In the app page, use filters like the date range, senders or only messages
+   with links to filter required messages.
+1. Click on "Copy to Clipboard" or "Share" to copy/share the texts and media
 1. Profit!
 
 </div>
