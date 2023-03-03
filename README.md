@@ -28,7 +28,9 @@ installed PWAs.
 
 <details>
     <summary>Watch Demo Video</summary>
-    <iframe width="300" height="800" src="https://www.youtube-nocookie.com/embed/tAKMq4soaJE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <!-- image link -->
+    <a href="https://youtu.be/tAKMq4soaJE"><img src="https://i.ytimg.com/vi/tAKMq4soaJE/hqdefault.jpg" /></a>
+    <!-- end image link -->
 </details>
 
 </div>
