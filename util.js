@@ -180,7 +180,6 @@ const shareMessages = () => {
     text.includes(`${f.name} (file attached)`)
   );
   const shareData = {
-    title: "title",
     text: text,
     files: files
   };
