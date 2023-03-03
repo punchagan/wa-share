@@ -186,7 +186,6 @@ const doShare = (text, n, files) => {
       "Permission denied for sharing the files by the browser";
     return;
   }
-
   (async () => {
     try {
       await navigator.share(shareData);
@@ -204,7 +203,27 @@ const shareMessages = () => {
   const files = window.attachedFiles.filter(f =>
     text.includes(`${f.name} (file attached)`)
   );
-  doShare(text, n, files);
+  const m = files.length;
+  if (m <= 10) {
+    doShare(text, n, files);
+  } else {
+    // HACK: To get around Chrome + Android limit of 10 attachments
+    // https://tinyurl.com/chrome-web-share-file-limit
+    const batches = Math.ceil(m / 10);
+    const shareDiv = document.querySelector("#share-buttons");
+    let start, end, btn;
+    for (let i = 0; i < batches; i++) {
+      btn = document.createElement("button");
+      btn.dataset.start = start = 10 * i;
+      btn.dataset.end = end = Math.min(m, 10 * (i + 1));
+      btn.addEventListener("click", event => {
+        const { start, end } = event.target.dataset;
+        doShare(text, n, files.slice(start, end));
+      });
+      btn.innerText = `Share files ${start + 1} to ${end}`;
+      shareDiv.append(btn);
+    }
+  }
 };
 
 const generateShareText = () => {
@@ -270,11 +289,9 @@ if (navigator.serviceWorker) {
     // Other media files are attached after the text file
     const dataFile = event.data.files[1];
     window.attachedFiles = event.data.files.slice(2);
-    if (window.attachedFiles.length > 10) {
-      // FIXME: investigate work around or prompt user to select attachments to
-      // share? or iterate over them in batches?
-      const msg =
-        "*NOTE*: Currently, Chrome + Android PWAs seem to allow only a maximum of 10 attachments. The Share feature will fail when trying to share a larger number of files.";
+    const m = window.attachedFiles.length;
+    if (m > 10) {
+      const msg = `*NOTE*: The current export has ${m} files. Chrome allows a maximum of 10 attachments. To work around this, the Share feature will attempt to share batches.`;
       const alertDiv = document.querySelector("#alert");
       alertDiv.innerText = msg;
     }
