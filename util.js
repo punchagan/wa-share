@@ -174,6 +174,36 @@ const toggleSelection = () => {
   });
 };
 
+const shareMessages = () => {
+  const [text, n] = generateShareText();
+  const files = window.attachedFiles.filter(f =>
+    text.includes(`${f.name} (file attached)`)
+  );
+  const shareData = {
+    title: "title",
+    text: text,
+    files: files
+  };
+  const alertDiv = document.querySelector("#alert");
+
+  if (!navigator.canShare(shareData)) {
+    alertDiv.textContent =
+      "Permission denied for sharing the files by the browser";
+    return;
+  }
+
+  (async () => {
+    try {
+      await navigator.share(shareData);
+      onCopy(text, n);
+      const m = shareData.files.length;
+      alertDiv.innerText = `Copied ${n} messages with ${m} attachments to the clipboard`;
+    } catch (err) {
+      alertDiv.innerText = `Error: ${err}`;
+    }
+  })();
+};
+
 const generateShareText = () => {
   const startDateEl = document.querySelector("#start-date");
   const endDateEl = document.querySelector("#end-date");
@@ -234,7 +264,9 @@ if (navigator.serviceWorker) {
   navigator.serviceWorker.addEventListener("message", event => {
     if (event.data.action !== "chat") return;
     // The first file a note to the user about what has been attached
+    // Other media files are attached after the text file
     const dataFile = event.data.files[1];
+    window.attachedFiles = event.data.files.slice(2);
     dataFile.text().then(data => processData(data));
   });
 }
