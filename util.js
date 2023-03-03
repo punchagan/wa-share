@@ -174,11 +174,7 @@ const toggleSelection = () => {
   });
 };
 
-const shareMessages = () => {
-  const [text, n] = generateShareText();
-  const files = window.attachedFiles.filter(f =>
-    text.includes(`${f.name} (file attached)`)
-  );
+const doShare = (text, n, files) => {
   const shareData = {
     text: text,
     files: files
@@ -196,11 +192,19 @@ const shareMessages = () => {
       await navigator.share(shareData);
       onCopy(text, n);
       const m = shareData.files.length;
-      alertDiv.innerText = `Copied ${n} messages with ${m} attachments to the clipboard`;
+      alertDiv.innerText = `Share ${n} messages with ${m} attachments`;
     } catch (err) {
       alertDiv.innerText = `Error: ${err}`;
     }
   })();
+};
+
+const shareMessages = () => {
+  const [text, n] = generateShareText();
+  const files = window.attachedFiles.filter(f =>
+    text.includes(`${f.name} (file attached)`)
+  );
+  doShare(text, n, files);
 };
 
 const generateShareText = () => {
