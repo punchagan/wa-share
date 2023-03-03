@@ -267,6 +267,14 @@ if (navigator.serviceWorker) {
     // Other media files are attached after the text file
     const dataFile = event.data.files[1];
     window.attachedFiles = event.data.files.slice(2);
+    if (window.attachedFiles.length > 10) {
+      // FIXME: investigate work around or prompt user to select attachments to
+      // share? or iterate over them in batches?
+      const msg =
+        "*NOTE*: Currently, Chrome + Android PWAs seem to allow only a maximum of 10 attachments. The Share feature will fail when trying to share a larger number of files.";
+      const alertDiv = document.querySelector("#alert");
+      alertDiv.innerText = msg;
+    }
     dataFile.text().then(data => processData(data));
   });
 }
