@@ -207,14 +207,18 @@ const generateShareText = () => {
   return [filtered.join(`\n${separator}\n`), filtered.length];
 };
 
-/* Click handler for Copy Messages button */
-const copyMessages = () => {
-  const [text, n] = generateShareText();
+const onCopy = (text, n) => {
   navigator.clipboard.writeText(text);
   const alertDiv = document.querySelector("#alert");
   alertDiv.innerText = `Copied ${n} messages to the clipboard`;
   document.querySelector("#copied-text").innerText = text;
   document.querySelector("#copied").style.display = "block";
+};
+
+/* Click handler for Copy Messages button */
+const copyMessages = () => {
+  const [text, n] = generateShareText();
+  onCopy(text, n);
 };
 
 if (navigator.serviceWorker) {
