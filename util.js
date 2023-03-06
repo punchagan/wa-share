@@ -207,7 +207,7 @@ const shareMessages = () => {
   if (m <= 10) {
     doShare(text, n, files);
   } else {
-    // HACK: To get around Chrome + Android limit of 10 attachments
+    // Work around for Chrome + Android limit of 10 attachments
     // https://tinyurl.com/chrome-web-share-file-limit
     const batches = Math.ceil(m / 10);
     const shareDiv = document.querySelector("#share-buttons");
